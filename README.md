@@ -1,5 +1,5 @@
 # Open5GS EPC & srsRAN 4G with ZeroMQ UE / RAN Sample Configuration - Select nearby UPF(PGW-U) according to the connected eNodeB
-On 2023.05.05, Open5GS MME has a facility to select SMF(PGW-C) by TAC and e_CellID.
+On 2023.05.05, Open5GS MME has a function to select SMF(PGW-C) by TAC and e_CellID.
 Therefore I describe a very simple configuration that uses Open5GS and srsRAN 4G to select a nearby UPF(PGW-U) according to the connected eNodeB.
 
 ---
@@ -885,6 +885,7 @@ The reasons to confirm in such a scenario are as follows:
                V
      eNodeB2 stop
 ```
+**Note. This scenario is just for confirming the function, and I think restarting MME to change SGW is not proper for real usage.**
 
 <h3 id="run_cp">Run Open5GS EPC C-Plane</h3>
 
