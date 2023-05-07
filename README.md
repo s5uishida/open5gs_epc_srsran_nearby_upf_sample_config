@@ -51,6 +51,7 @@ Therefore I describe a very simple configuration that uses Open5GS and srsRAN 4G
     - [Run srsRAN 4G ZMQ RAN (eNodeB1) with TAC=1 in Loc1](#run_ran1)
     - [Run srsRAN 4G ZMQ UE (ue-loc1.conf) connected to eNodeB1 in Loc1](#run_ue1)
     - [Ping google.com going through PDN=10.45.0.0/16 on Loc1](#ping_ue1)
+  - [Restart Open5GS MME](#restart_mme)
   - [Confirm in Loc2 (TAC=2)](#confirm_loc2)
     - [Run srsRAN 4G ZMQ RAN (eNodeB2) with TAC=2 in Loc2](#run_ran2)
     - [Run srsRAN 4G ZMQ UE (ue-loc2.conf) connected to eNodeB2 in Loc2](#run_ue2)
