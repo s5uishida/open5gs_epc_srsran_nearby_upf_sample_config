@@ -85,7 +85,7 @@ Each VMs are as follows.
 | VM6 | srsRAN 4G ZMQ UE | 192.168.0.123/24 <br> 192.168.0.124/24 | Ubuntu 22.04 | 2GB | 10GB |
 
 MME, SGW-C, SMF(PGW-C) and PCRF addresses are as follows. 
-| NF | IP address | local address | Supported TACs |
+| NF | IP address | Local address | Supported TACs |
 | --- | --- | --- | --- |
 | MME | 192.168.0.111 | 127.0.0.2 | 1, 2 |
 | SGW-C1 | 192.168.0.112 | 127.0.0.3 | 1 |
