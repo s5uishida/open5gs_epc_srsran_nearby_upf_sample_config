@@ -885,7 +885,7 @@ The reasons to confirm in such a scenario are as follows:
                V
      eNodeB2 stop
 ```
-**Note. This scenario is just for confirming the function, and I think restarting MME to change SGW is not proper for real usage.**
+**Note. This scenario is just for confirming the function, and I think that restarting MME to change SGW is not proper for real usage.**
 
 <h3 id="run_cp">Run Open5GS EPC C-Plane</h3>
 
