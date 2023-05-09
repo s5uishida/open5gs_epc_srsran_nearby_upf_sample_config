@@ -1220,7 +1220,7 @@ The `tcpdump` log on U-Plane2 is as follows.
 **Note. Make sure the packet does not go through U-Plane1. The UE connects to the PDN of U-Plane2 in the same Loc2 according to the connected eNodeB2 in Loc2.**
 
 ---
-I was able to confirm the very simple configuration in which one UE connects to the SGW-U/UPF(PGW-U) in the same location according connected eNodeB.
+This makes it to confirm that at Initial Attach, MME can select SMF (PGW-C) by TAC according to the connected eNodeB, and UE connects to SGW-U/UPF(PGW-U) in the same location.
 I would like to thank the excellent developers and all the contributors of Open5GS and srsRAN 4G.
 
 <h2 id="changelog">Changelog (summary)</h2>
