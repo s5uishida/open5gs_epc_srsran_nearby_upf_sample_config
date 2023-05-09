@@ -103,7 +103,7 @@ The main information of eNodeBs is as follows.
 | eNodeB2 | Loc2 | 192.168.0.122 | 001 | 01 | 2 | 0x19c | 0x01 | 0x19c01 |
 
 Subscriber Information (other information is the same) is as follows.  
-| UE | IMSI | PDN | OP/OPc | eNodeB# | IP addres in ue.conf of srsRAN UE |
+| UE | IMSI | PDN | OP/OPc | eNodeB# | IP address in ue.conf of srsRAN UE |
 | --- | --- | --- | --- | --- | --- |
 | UE | 001010000000100 | internet | OPc | eNodeB1 in Loc1 <br> eNodeB2 in Loc2 | 192.168.0.123 in ue-loc1.conf <br> 192.168.0.124 in ue-loc2.conf |
 
