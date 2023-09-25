@@ -4,7 +4,9 @@ Therefore I describe a very simple configuration that uses Open5GS and srsRAN 4G
 
 ---
 
-<h2 id="conf_list">List of Sample Configurations</h2>
+<a id="conf_list"></a>
+
+## List of Sample Configurations
 
 1. [One SGW-C/PGW-C, one SGW-U/PGW-U and one APN](https://github.com/s5uishida/open5gs_epc_srsran_sample_config)
 2. [One SGW-C/PGW-C, Multiple SGW-Us/PGW-Us and APNs](https://github.com/s5uishida/open5gs_epc_oai_sample_config)
@@ -22,7 +24,9 @@ Therefore I describe a very simple configuration that uses Open5GS and srsRAN 4G
 
 ---
 
-<h2 id="misc">Miscellaneous Notes</h2>
+<a id="misc"></a>
+
+## Miscellaneous Notes
 
 - [Install MongoDB 6.0 and Open5GS WebUI](https://github.com/s5uishida/open5gs_install_mongodb6_webui)
 - [Install MongoDB 4.4.18 on Ubuntu 20.04 for Raspberry Pi 4B](https://github.com/s5uishida/install_mongodb_on_ubuntu_for_rp4b)
@@ -31,7 +35,9 @@ Therefore I describe a very simple configuration that uses Open5GS and srsRAN 4G
 
 ---
 
-<h2 id="toc">Table of Contents</h2>
+<a id="toc"></a>
+
+## Table of Contents
 
 - [Overview of Open5GS CUPS-enabled EPC Simulation Mobile Network](#overview)
 - [Changes in configuration files of Open5GS EPC and srsRAN 4G ZMQ UE / RAN](#changes)
@@ -64,7 +70,9 @@ Therefore I describe a very simple configuration that uses Open5GS and srsRAN 4G
 - [Changelog (summary)](#changelog)
 
 ---
-<h2 id="overview">Overview of Open5GS CUPS-enabled EPC Simulation Mobile Network</h2>
+<a id="overview"></a>
+
+## Overview of Open5GS CUPS-enabled EPC Simulation Mobile Network
 
 The following minimum configuration was set as a condition.
 - The pair of eNodeB and SGW-U/UPF(PGW-U) exists in the same location.
@@ -121,13 +129,17 @@ Each PDNs are as follows.
 | 10.45.0.0/16 | Loc1 | ogstun | internet | tun_srsue | U-Plane1 |
 | 10.46.0.0/16 | Loc2 | ogstun | internet | tun_srsue | U-Plane2 |
 
-<h2 id="changes">Changes in configuration files of Open5GS EPC and srsRAN 4G ZMQ UE / RAN</h2>
+<a id="changes"></a>
+
+## Changes in configuration files of Open5GS EPC and srsRAN 4G ZMQ UE / RAN
 
 Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN respectively.
 - Open5GS v2.6.4 (2023.09.02) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
 - srsRAN 4G (2023.09.02) - https://docs.srsran.com/projects/4g/en/latest/
 
-<h3 id="changes_cp">Changes in configuration files of Open5GS EPC C-Plane</h3>
+<a id="changes_cp"></a>
+
+### Changes in configuration files of Open5GS EPC C-Plane
 
 - `open5gs/install/etc/open5gs/mme.yaml`
 ```diff
@@ -490,7 +502,9 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 +ConnectPeer = "smf.localdomain" { ConnectTo = "127.0.0.24"; No_TLS; };
 ```
 
-<h3 id="changes_up1">Changes in configuration files of Open5GS EPC U-Plane1</h3>
+<a id="changes_up1"></a>
+
+### Changes in configuration files of Open5GS EPC U-Plane1
 
 - `open5gs/install/etc/open5gs/sgwu.yaml`
 ```diff
@@ -532,7 +546,9 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
          port: 9090
 ```
 
-<h3 id="changes_up2">Changes in configuration files of Open5GS EPC U-Plane2</h3>
+<a id="changes_up2"></a>
+
+### Changes in configuration files of Open5GS EPC U-Plane2
 
 - `open5gs/install/etc/open5gs/sgwu.yaml`
 ```diff
@@ -575,9 +591,13 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
          port: 9090
 ```
 
-<h3 id="changes_srs">Changes in configuration files of srsRAN 4G ZMQ UE / RAN</h3>
+<a id="changes_srs"></a>
 
-<h4 id="changes_ran1">Changes in configuration files of RAN (eNodeB1)</h4>
+### Changes in configuration files of srsRAN 4G ZMQ UE / RAN
+
+<a id="changes_ran1"></a>
+
+#### Changes in configuration files of RAN (eNodeB1)
 
 - `srsRAN_4G/build/srsenb/enb.conf`
 ```diff
@@ -623,7 +643,9 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
      dl_earfcn = 3350;
 ```
 
-<h4 id="changes_ran2">Changes in configuration files of RAN (eNodeB2)</h4>
+<a id="changes_ran2"></a>
+
+#### Changes in configuration files of RAN (eNodeB2)
 
 - `srsRAN_4G/build/srsenb/enb.conf`
 ```diff
@@ -673,7 +695,9 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
      dl_earfcn = 3350;
 ```
 
-<h4 id="changes_ue_loc1">Changes in configuration files of UE for Loc1 (IMSI-001010000000100)</h4>
+<a id="changes_ue_loc1"></a>
+
+#### Changes in configuration files of UE for Loc1 (IMSI-001010000000100)
 
 - `srsRAN_4G/build/srsue/ue-loc1.conf`
 ```diff
@@ -716,7 +740,9 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
  #force_imsi_attach = false
 ```
 
-<h4 id="changes_ue_loc2">Changes in configuration files of UE for Loc2 (IMSI-001010000000100)</h4>
+<a id="changes_ue_loc2"></a>
+
+#### Changes in configuration files of UE for Loc2 (IMSI-001010000000100)
 
 - `srsRAN_4G/build/srsue/ue-loc2.conf`
 ```diff
@@ -759,9 +785,13 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
  #force_imsi_attach = false
 ```
 
-<h2 id="network_settings">Network settings of Open5GS EPC and srsRAN 4G ZMQ UE / RAN</h2>
+<a id="network_settings"></a>
 
-<h3 id="network_settings_cp">Network settings of Open5GS EPC C-Plane</h3>
+## Network settings of Open5GS EPC and srsRAN 4G ZMQ UE / RAN
+
+<a id="network_settings_cp"></a>
+
+### Network settings of Open5GS EPC C-Plane
 
 Add IP addresses for SGW-C1/SMF1(PGW-C) and SGW-C2/SMF2(PGW-C).
 ```
@@ -773,7 +803,9 @@ ip addr add 192.168.0.115/24 dev enp0s8
 **Note. `enp0s8` is the network interface of `192.168.0.0/24` in my VirtualBox environment.
 Please change it according to your environment.**
 
-<h3 id="network_settings_up1">Network settings of Open5GS EPC U-Plane1</h3>
+<a id="network_settings_up1"></a>
+
+### Network settings of Open5GS EPC U-Plane1
 
 First, uncomment the next line in the `/etc/sysctl.conf` file and reflect it in the OS.
 ```
@@ -793,7 +825,9 @@ ip link set ogstun up
 iptables -t nat -A POSTROUTING -s 10.45.0.0/16 ! -o ogstun -j MASQUERADE
 ```
 
-<h3 id="network_settings_up2">Network settings of Open5GS EPC U-Plane2</h3>
+<a id="network_settings_up2"></a>
+
+### Network settings of Open5GS EPC U-Plane2
 
 First, uncomment the next line in the `/etc/sysctl.conf` file and reflect it in the OS.
 ```
@@ -813,14 +847,18 @@ ip link set ogstun up
 iptables -t nat -A POSTROUTING -s 10.46.0.0/16 ! -o ogstun -j MASQUERADE
 ```
 
-<h3 id="network_settings_ue">Network settings of srsRAN 4G ZMQ UE</h3>
+<a id="network_settings_ue"></a>
+
+### Network settings of srsRAN 4G ZMQ UE
 
 Add IP address for UE in Loc2.
 ```
 ip addr add 192.168.0.124/24 dev enp0s8
 ```
 
-<h2 id="build">Build Open5GS and srsRAN 4G ZMQ UE / RAN</h2>
+<a id="build"></a>
+
+## Build Open5GS and srsRAN 4G ZMQ UE / RAN
 
 Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN respectively.
 - Open5GS v2.6.4 (2023.09.02) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
@@ -831,7 +869,9 @@ It is not necessary to install MongoDB on Open5GS EPC U-Plane machines.
 [MongoDB Compass](https://www.mongodb.com/products/compass) is a convenient tool to look at the MongoDB database.
 **See also [this](https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins) for building srsRAN 4G.**
 
-<h2 id="run">Run Open5GS EPC and srsRAN 4G ZMQ UE / RAN</h2>
+<a id="run"></a>
+
+## Run Open5GS EPC and srsRAN 4G ZMQ UE / RAN
 
 I will confirm in the following scenario.
 The reasons to confirm in such a scenario are as follows:
@@ -892,7 +932,9 @@ The reasons to confirm in such a scenario are as follows:
 ```
 **Note. This scenario is just for confirming the function, and I think that restarting MME to change SGW is not proper for real usage.**
 
-<h3 id="run_cp">Run Open5GS EPC C-Plane</h3>
+<a id="run_cp"></a>
+
+### Run Open5GS EPC C-Plane
 
 First, run Open5GS EPC C-Plane.
 
@@ -908,7 +950,9 @@ First, run Open5GS EPC C-Plane.
 ./install/bin/open5gs-pcrfd -c install/etc/open5gs/pcrf2.yaml &
 ```
 
-<h3 id="run_up">Run Open5GS EPC U-Plane1 & U-Plane2</h3>
+<a id="run_up"></a>
+
+### Run Open5GS EPC U-Plane1 & U-Plane2
 
 Next, run Open5GS EPC U-Planes.
 
@@ -936,9 +980,13 @@ tcpdump: verbose output suppressed, use -v[v]... for full protocol decode
 listening on ogstun, link-type RAW (Raw IP), snapshot length 262144 bytes
 ```
 
-<h3 id="confirm_loc1">Confirm in Loc1 (TAC=1)</h3>
+<a id="confirm_loc1"></a>
 
-<h4 id="run_ran1">Run srsRAN 4G ZMQ RAN (eNodeB1) with TAC=1 in Loc1</h4>
+### Confirm in Loc1 (TAC=1)
+
+<a id="run_ran1"></a>
+
+#### Run srsRAN 4G ZMQ RAN (eNodeB1) with TAC=1 in Loc1
 
 Run srsRAN 4G ZMQ RAN (eNodeB1) and connect to Open5GS EPC.
 ```
@@ -973,7 +1021,9 @@ The Open5GS C-Plane log when executed is as follows.
 09/03 17:35:54.983: [mme] INFO: eNB-S1[192.168.0.121] max_num_of_ostreams : 30 (../src/mme/mme-sm.c:150)
 ```
 
-<h4 id="run_ue1">Run srsRAN 4G ZMQ UE (ue-loc1.conf) connected to eNodeB1 in Loc1</h4>
+<a id="run_ue1"></a>
+
+#### Run srsRAN 4G ZMQ UE (ue-loc1.conf) connected to eNodeB1 in Loc1
 
 Run srsRAN 4G ZMQ UE (ue-loc1.conf), connect to eNodeB1 in Loc1 and connect to Open5GS EPC.
 ```
@@ -1054,7 +1104,9 @@ The result of `ip addr show` on VM6 (UE) is as follows.
 ...
 ```
 
-<h4 id="ping_ue1">Ping google.com going through PDN=10.45.0.0/16 on Loc1</h4>
+<a id="ping_ue1"></a>
+
+#### Ping google.com going through PDN=10.45.0.0/16 on Loc1
 
 Confirm by using `tcpdump` that the packet goes through `if=ogstun` on U-Plane1.
 ```
@@ -1077,7 +1129,9 @@ The `tcpdump` log on U-Plane1 is as follows.
 
 **After this, stop eNodeB1 and UE in preparation for confirming Loc2 with TAC=2.**
 
-<h3 id="restart_mme">Restart Open5GS MME</h3>
+<a id="restart_mme"></a>
+
+### Restart Open5GS MME
 
 Restart Open5GS MME in preparation for confirming Loc2 with TAC=2.
 ```
@@ -1085,9 +1139,13 @@ pkill open5gs-mmed
 ./install/bin/open5gs-mmed &
 ```
 
-<h3 id="confirm_loc2">Confirm in Loc2 (TAC=2)</h3>
+<a id="confirm_loc2"></a>
 
-<h4 id="run_ran2">Run srsRAN 4G ZMQ RAN (eNodeB2) with TAC=2 in Loc2</h4>
+### Confirm in Loc2 (TAC=2)
+
+<a id="run_ran2"></a>
+
+#### Run srsRAN 4G ZMQ RAN (eNodeB2) with TAC=2 in Loc2
 
 Run srsRAN 4G ZMQ RAN (eNodeB2) and connect to Open5GS EPC.
 ```
@@ -1122,7 +1180,9 @@ The Open5GS C-Plane log when executed is as follows.
 09/03 17:50:00.581: [mme] INFO: eNB-S1[192.168.0.122] max_num_of_ostreams : 30 (../src/mme/mme-sm.c:150)
 ```
 
-<h4 id="run_ue2">Run srsRAN 4G ZMQ UE (ue-loc2.conf) connected to eNodeB2 in Loc2</h4>
+<a id="run_ue2"></a>
+
+#### Run srsRAN 4G ZMQ UE (ue-loc2.conf) connected to eNodeB2 in Loc2
 
 Run srsRAN 4G ZMQ UE (ue-loc2.conf), connect to eNodeB2 in Loc2 and connect to Open5GS EPC.
 ```
@@ -1203,7 +1263,9 @@ The result of `ip addr show` on VM6 (UE) is as follows.
 ...
 ```
 
-<h4 id="ping_ue2">Ping google.com going through PDN=10.46.0.0/16 on Loc2</h4>
+<a id="ping_ue2"></a>
+
+#### Ping google.com going through PDN=10.46.0.0/16 on Loc2
 
 Confirm by using `tcpdump` that the packet goes through `if=ogstun` on U-Plane2.
 ```
@@ -1228,7 +1290,9 @@ The `tcpdump` log on U-Plane2 is as follows.
 This makes it to confirm that at Initial Attach, MME can select SMF(PGW-C) by TAC according to the connected eNodeB, and UE connects to SGW-U/UPF(PGW-U) in the same location.
 I would like to thank the excellent developers and all the contributors of Open5GS and srsRAN 4G.
 
-<h2 id="changelog">Changelog (summary)</h2>
+<a id="changelog"></a>
+
+## Changelog (summary)
 
 - [2023.09.03] Updated Open5GS and srsRAN 4G.
 - [2023.05.07] Initial release.
