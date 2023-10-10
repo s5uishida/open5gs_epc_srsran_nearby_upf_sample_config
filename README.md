@@ -86,7 +86,7 @@ The built simulation environment is as follows.
 
 The EPC / UE / RAN used are as follows.
 - EPC - Open5GS v2.6.4 (2023.09.02) - https://github.com/open5gs/open5gs
-- UE / RAN - srsRAN 4G (2023.09.02) - https://github.com/srsran/srsRAN_4G
+- UE / RAN - srsRAN 4G (2023.06.19) - https://github.com/srsran/srsRAN_4G
 
 Each VMs are as follows.  
 | VM# | SW & Role | IP address | OS | Memory (Min) | HDD (Min) |
@@ -135,7 +135,7 @@ Each PDNs are as follows.
 
 Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN respectively.
 - Open5GS v2.6.4 (2023.09.02) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
-- srsRAN 4G (2023.09.02) - https://docs.srsran.com/projects/4g/en/latest/
+- srsRAN 4G (2023.06.19) - https://docs.srsran.com/projects/4g/en/latest/
 
 <a id="changes_cp"></a>
 
@@ -862,7 +862,7 @@ ip addr add 192.168.0.124/24 dev enp0s8
 
 Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN respectively.
 - Open5GS v2.6.4 (2023.09.02) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
-- srsRAN 4G (2023.09.02) - https://docs.srsran.com/projects/4g/en/latest/
+- srsRAN 4G (2023.06.19) - https://docs.srsran.com/projects/4g/en/latest/
 
 Install MongoDB on Open5GS EPC C-Plane machine.
 It is not necessary to install MongoDB on Open5GS EPC U-Plane machines.
