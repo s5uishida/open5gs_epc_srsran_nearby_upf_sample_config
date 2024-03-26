@@ -58,13 +58,13 @@ The built simulation environment is as follows.
 <img src="./images/network-overview.png" title="./images/network-overview.png" width=1000px></img>
 
 The EPC / UE / RAN used are as follows.
-- EPC - Open5GS v2.6.4 (2023.09.02) - https://github.com/open5gs/open5gs
-- UE / RAN - srsRAN 4G (2023.06.19) - https://github.com/srsran/srsRAN_4G
+- EPC - Open5GS v2.7.0 (2024.03.24) - https://github.com/open5gs/open5gs
+- UE / RAN - srsRAN 4G (2024.02.01) - https://github.com/srsran/srsRAN_4G
 
 Each VMs are as follows.  
 | VM# | SW & Role | IP address | OS | Memory (Min) | HDD (Min) |
 | --- | --- | --- | --- | --- | --- |
-| VM1 | Open5GS EPC C-Plane | 192.168.0.111/24 <br> 192.168.0.112/24 <br> 192.168.0.113/24 <br> 192.168.0.114/24 <br> 192.168.0.115/24 | Ubuntu 22.04 | 1GB | 20GB |
+| VM1 | Open5GS EPC C-Plane | 192.168.0.111/24 <br> 192.168.0.112/24 <br> 192.168.0.113/24 <br> 192.168.0.114/24 <br> 192.168.0.115/24 | Ubuntu 22.04 | 2GB | 20GB |
 | VM2 | Open5GS EPC U-Plane1 | 192.168.0.116/24 <br> 192.168.0.117/24 | Ubuntu 22.04 | 1GB | 20GB |
 | VM3 | Open5GS EPC U-Plane2 | 192.168.0.118/24 <br> 192.168.0.119/24 | Ubuntu 22.04 | 1GB | 20GB |
 | VM4 | srsRAN 4G ZMQ RAN (eNodeB1) | 192.168.0.121/24 | Ubuntu 22.04 | 2GB | 10GB |
@@ -107,8 +107,8 @@ Each PDNs are as follows.
 ## Changes in configuration files of Open5GS EPC and srsRAN 4G ZMQ UE / RAN
 
 Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN respectively.
-- Open5GS v2.6.4 (2023.09.02) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
-- srsRAN 4G (2023.06.19) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
+- Open5GS v2.7.0 (2024.03.24) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
+- srsRAN 4G (2024.02.01) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
 
 <a id="changes_cp"></a>
 
@@ -116,314 +116,284 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 
 - `open5gs/install/etc/open5gs/mme.yaml`
 ```diff
---- mme.yaml.orig       2023-09-03 15:52:59.000000000 +0900
-+++ mme.yaml    2023-09-03 16:34:49.080255556 +0900
-@@ -321,7 +321,7 @@
- mme:
-     freeDiameter: /root/open5gs/install/etc/freeDiameter/mme.conf
-     s1ap:
--      - addr: 127.0.0.2
-+      - addr: 192.168.0.111
-     gtpc:
-       - addr: 127.0.0.2
-     metrics:
-@@ -329,15 +329,15 @@
+--- mme.yaml.orig       2024-03-26 21:08:49.043124819 +0900
++++ mme.yaml    2024-03-26 21:15:04.190099414 +0900
+@@ -11,30 +11,36 @@
+   freeDiameter: /root/open5gs/install/etc/freeDiameter/mme.conf
+   s1ap:
+     server:
+-      - address: 127.0.0.2
++      - address: 192.168.0.111
+   gtpc:
+     server:
+       - address: 127.0.0.2
+     client:
+       sgwc:
+         - address: 127.0.0.3
++          tac: 1
++        - address: 127.0.0.23
++          tac: 2
+       smf:
+         - address: 127.0.0.4
++          tac: 1
++        - address: 127.0.0.24
++          tac: 2
+   metrics:
+     server:
+       - address: 127.0.0.2
          port: 9090
-     gummei:
-       plmn_id:
+   gummei:
+     - plmn_id:
 -        mcc: 999
 -        mnc: 70
 +        mcc: 001
 +        mnc: 01
        mme_gid: 2
        mme_code: 1
-     tai:
-       plmn_id:
+   tai:
+     - plmn_id:
 -        mcc: 999
 -        mnc: 70
 -      tac: 1
 +        mcc: 001
 +        mnc: 01
 +      tac: [1, 2]
-     security:
-         integrity_order : [ EIA2, EIA1, EIA0 ]
-         ciphering_order : [ EEA0, EEA1, EEA2 ]
-@@ -407,6 +407,9 @@
- sgwc:
-     gtpc:
-       - addr: 127.0.0.3
-+        tac: 1
-+      - addr: 127.0.0.23
-+        tac: 2
- 
- #
- # smf:
-@@ -470,9 +473,10 @@
- #       e_cell_id: [12345, a9413, 98765]
- smf:
-     gtpc:
--      - addr:
--        - 127.0.0.4
--        - ::1
-+      - addr: 127.0.0.4
-+        tac: 1
-+      - addr: 127.0.0.24
-+        tac: 2
- 
- #
- # <GTPv1C Client>
+   security:
+     integrity_order : [ EIA2, EIA1, EIA0 ]
+     ciphering_order : [ EEA0, EEA1, EEA2 ]
 ```
 - `open5gs/install/etc/open5gs/sgwc1.yaml`
 ```diff
---- sgwc.yaml.orig      2023-04-30 00:53:20.000000000 +0900
-+++ sgwc1.yaml  2023-05-03 10:50:12.000000000 +0900
-@@ -20,7 +20,7 @@
- #    domain: core,sbi,ausf,event,tlv,mem,sock
- #
+--- sgwc.yaml.orig      2024-03-24 15:36:48.000000000 +0900
++++ sgwc1.yaml  2024-03-26 21:23:17.961823380 +0900
+@@ -1,5 +1,5 @@
  logger:
--    file: /root/open5gs/install/var/log/open5gs/sgwc.log
-+    file: /root/open5gs/install/var/log/open5gs/sgwc1.log
+-  file: /root/open5gs/install/var/log/open5gs/sgwc.log
++  file: /root/open5gs/install/var/log/open5gs/sgwc1.log
+ #  level: info   # fatal|error|warn|info(default)|debug|trace
  
- #
- #  <GTP-C Server>
-@@ -81,7 +81,7 @@
-     gtpc:
-       - addr: 127.0.0.3
-     pfcp:
--      - addr: 127.0.0.3
-+      - addr: 192.168.0.112
+ global:
+@@ -13,10 +13,11 @@
+       - address: 127.0.0.3
+   pfcp:
+     server:
+-      - address: 127.0.0.3
++      - address: 192.168.0.112
+     client:
+       sgwu:
+-        - address: 127.0.0.6
++        - address: 192.168.0.116
++          apn: internet
  
- #
- #  <PFCP Client>>
-@@ -130,7 +130,8 @@
- #
- sgwu:
-     pfcp:
--      - addr: 127.0.0.6
-+      - addr: 192.168.0.116
-+        apn: internet
- 
- #
- #  o Disable use of IPv4 addresses (only IPv6)
+ ################################################################################
+ # GTP-C Server
 ```
 - `open5gs/install/etc/open5gs/sgwc2.yaml`
 ```diff
---- sgwc.yaml.orig      2023-04-30 00:53:20.000000000 +0900
-+++ sgwc2.yaml  2023-05-03 10:49:34.000000000 +0900
-@@ -20,7 +20,7 @@
- #    domain: core,sbi,ausf,event,tlv,mem,sock
- #
+--- sgwc.yaml.orig      2024-03-24 15:36:48.000000000 +0900
++++ sgwc2.yaml  2024-03-26 21:24:49.360916445 +0900
+@@ -1,5 +1,5 @@
  logger:
--    file: /root/open5gs/install/var/log/open5gs/sgwc.log
-+    file: /root/open5gs/install/var/log/open5gs/sgwc2.log
+-  file: /root/open5gs/install/var/log/open5gs/sgwc.log
++  file: /root/open5gs/install/var/log/open5gs/sgwc2.log
+ #  level: info   # fatal|error|warn|info(default)|debug|trace
  
- #
- #  <GTP-C Server>
-@@ -79,9 +79,9 @@
- #
+ global:
+@@ -10,13 +10,14 @@
  sgwc:
-     gtpc:
--      - addr: 127.0.0.3
-+      - addr: 127.0.0.23
-     pfcp:
--      - addr: 127.0.0.3
-+      - addr: 192.168.0.114
+   gtpc:
+     server:
+-      - address: 127.0.0.3
++      - address: 127.0.0.23
+   pfcp:
+     server:
+-      - address: 127.0.0.3
++      - address: 192.168.0.114
+     client:
+       sgwu:
+-        - address: 127.0.0.6
++        - address: 192.168.0.118
++          apn: internet
  
- #
- #  <PFCP Client>>
-@@ -130,7 +130,8 @@
- #
- sgwu:
-     pfcp:
--      - addr: 127.0.0.6
-+      - addr: 192.168.0.118
-+        apn: internet
- 
- #
- #  o Disable use of IPv4 addresses (only IPv6)
+ ################################################################################
+ # GTP-C Server
 ```
 - `open5gs/install/etc/open5gs/smf1.yaml`
 ```diff
---- smf.yaml.orig       2023-04-30 00:53:20.000000000 +0900
-+++ smf1.yaml   2023-05-03 10:51:06.000000000 +0900
-@@ -20,7 +20,7 @@
- #    domain: core,sbi,ausf,event,tlv,mem,sock
- #
+--- smf.yaml.orig       2024-03-24 15:36:48.000000000 +0900
++++ smf1.yaml   2024-03-26 21:40:41.665942424 +0900
+@@ -1,5 +1,5 @@
  logger:
--    file: /root/open5gs/install/var/log/open5gs/smf.log
-+    file: /root/open5gs/install/var/log/open5gs/smf1.log
+-  file: /root/open5gs/install/var/log/open5gs/smf.log
++  file: /root/open5gs/install/var/log/open5gs/smf1.log
+ #  level: info   # fatal|error|warn|info(default)|debug|trace
  
- #
- #  o TLS enable/disable
-@@ -598,33 +598,24 @@
- #      maximum_integrity_protected_data_rate_downlink: bitrate64kbs|maximum-UE-rate
- #
+ global:
+@@ -8,46 +8,36 @@
+ #    peer: 64
+ 
  smf:
--    sbi:
--      - addr: 127.0.0.4
+-  sbi:
+-    server:
+-      - address: 127.0.0.4
 -        port: 7777
-     pfcp:
--      - addr: 127.0.0.4
--      - addr: ::1
-+      - addr: 192.168.0.113
-     gtpc:
-       - addr: 127.0.0.4
--      - addr: ::1
-     gtpu:
--      - addr: 127.0.0.4
--      - addr: ::1
-+      - addr: 192.168.0.113
-     metrics:
-       - addr: 127.0.0.4
+-    client:
+-#      nrf:
+-#        - uri: http://127.0.0.10:7777
+-      scp:
+-        - uri: http://127.0.0.200:7777
+   pfcp:
+     server:
+-      - address: 127.0.0.4
++      - address: 192.168.0.113
+     client:
+       upf:
+-        - address: 127.0.0.7
++        - address: 192.168.0.117
++          dnn: internet
+   gtpc:
+     server:
+       - address: 127.0.0.4
+   gtpu:
+     server:
+-      - address: 127.0.0.4
++      - address: 192.168.0.113
+   metrics:
+     server:
+       - address: 127.0.0.4
          port: 9090
-     subnet:
-       - addr: 10.45.0.1/16
--      - addr: 2001:db8:cafe::1/48
-     dns:
-       - 8.8.8.8
-       - 8.8.4.4
--      - 2001:4860:4860::8888
--      - 2001:4860:4860::8844
-     mtu: 1400
-     ctf:
-       enabled: auto
--    freeDiameter: /root/open5gs/install/etc/freeDiameter/smf.conf
-+    freeDiameter: /root/open5gs/install/etc/freeDiameter/smf1.conf
+   session:
+     - subnet: 10.45.0.1/16
+-    - subnet: 2001:db8:cafe::1/48
++      dnn: internet
+   dns:
+     - 8.8.8.8
+     - 8.8.4.4
+-    - 2001:4860:4860::8888
+-    - 2001:4860:4860::8844
+   mtu: 1400
+ #  p-cscf:
+ #    - 127.0.0.1
+ #    - ::1
+ #  ctf:
+ #    enabled: auto   # auto(default)|yes|no
+-  freeDiameter: /root/open5gs/install/etc/freeDiameter/smf.conf
++  freeDiameter: /root/open5gs/install/etc/freeDiameter/smf1.conf
  
- #
- #  <SBI Client>>
-@@ -690,10 +681,6 @@
- #          l_linger: 10
- #
- #
--scp:
--    sbi:
--      - addr: 127.0.1.10
--        port: 7777
- 
- #
- #  <SBI Client>>
-@@ -808,7 +795,8 @@
- #
- upf:
-     pfcp:
--      - addr: 127.0.0.7
-+      - addr: 192.168.0.117
-+        dnn: internet
- 
- #
- #  o Disable use of IPv4 addresses (only IPv6)
+ ################################################################################
+ # SMF Info
 ```
 - `open5gs/install/etc/open5gs/smf2.yaml`
 ```diff
---- smf.yaml.orig       2023-04-30 00:53:20.000000000 +0900
-+++ smf2.yaml   2023-05-03 10:51:32.000000000 +0900
-@@ -20,7 +20,7 @@
- #    domain: core,sbi,ausf,event,tlv,mem,sock
- #
+--- smf.yaml.orig       2024-03-24 15:36:48.000000000 +0900
++++ smf2.yaml   2024-03-26 21:43:03.901126326 +0900
+@@ -1,5 +1,5 @@
  logger:
--    file: /root/open5gs/install/var/log/open5gs/smf.log
-+    file: /root/open5gs/install/var/log/open5gs/smf2.log
+-  file: /root/open5gs/install/var/log/open5gs/smf.log
++  file: /root/open5gs/install/var/log/open5gs/smf2.log
+ #  level: info   # fatal|error|warn|info(default)|debug|trace
  
- #
- #  o TLS enable/disable
-@@ -598,33 +598,24 @@
- #      maximum_integrity_protected_data_rate_downlink: bitrate64kbs|maximum-UE-rate
- #
+ global:
+@@ -8,46 +8,36 @@
+ #    peer: 64
+ 
  smf:
--    sbi:
--      - addr: 127.0.0.4
+-  sbi:
+-    server:
+-      - address: 127.0.0.4
 -        port: 7777
-     pfcp:
--      - addr: 127.0.0.4
--      - addr: ::1
-+      - addr: 192.168.0.115
-     gtpc:
--      - addr: 127.0.0.4
--      - addr: ::1
-+      - addr: 127.0.0.24
-     gtpu:
--      - addr: 127.0.0.4
--      - addr: ::1
-+      - addr: 192.168.0.115
-     metrics:
--      - addr: 127.0.0.4
-+      - addr: 127.0.0.24
+-    client:
+-#      nrf:
+-#        - uri: http://127.0.0.10:7777
+-      scp:
+-        - uri: http://127.0.0.200:7777
+   pfcp:
+     server:
+-      - address: 127.0.0.4
++      - address: 192.168.0.115
+     client:
+       upf:
+-        - address: 127.0.0.7
++        - address: 192.168.0.119
++          dnn: internet
+   gtpc:
+     server:
+-      - address: 127.0.0.4
++      - address: 127.0.0.24
+   gtpu:
+     server:
+-      - address: 127.0.0.4
++      - address: 192.168.0.115
+   metrics:
+     server:
+-      - address: 127.0.0.4
++      - address: 127.0.0.24
          port: 9090
-     subnet:
--      - addr: 10.45.0.1/16
--      - addr: 2001:db8:cafe::1/48
-+      - addr: 10.46.0.1/16
-     dns:
-       - 8.8.8.8
-       - 8.8.4.4
--      - 2001:4860:4860::8888
--      - 2001:4860:4860::8844
-     mtu: 1400
-     ctf:
-       enabled: auto
--    freeDiameter: /root/open5gs/install/etc/freeDiameter/smf.conf
-+    freeDiameter: /root/open5gs/install/etc/freeDiameter/smf2.conf
+   session:
+-    - subnet: 10.45.0.1/16
+-    - subnet: 2001:db8:cafe::1/48
++    - subnet: 10.46.0.1/16
++      dnn: internet
+   dns:
+     - 8.8.8.8
+     - 8.8.4.4
+-    - 2001:4860:4860::8888
+-    - 2001:4860:4860::8844
+   mtu: 1400
+ #  p-cscf:
+ #    - 127.0.0.1
+ #    - ::1
+ #  ctf:
+ #    enabled: auto   # auto(default)|yes|no
+-  freeDiameter: /root/open5gs/install/etc/freeDiameter/smf.conf
++  freeDiameter: /root/open5gs/install/etc/freeDiameter/smf2.conf
  
- #
- #  <SBI Client>>
-@@ -690,10 +681,6 @@
- #          l_linger: 10
- #
- #
--scp:
--    sbi:
--      - addr: 127.0.1.10
--        port: 7777
- 
- #
- #  <SBI Client>>
-@@ -808,7 +795,8 @@
- #
- upf:
-     pfcp:
--      - addr: 127.0.0.7
-+      - addr: 192.168.0.119
-+        dnn: internet
- 
- #
- #  o Disable use of IPv4 addresses (only IPv6)
+ ################################################################################
+ # SMF Info
 ```
 - `open5gs/install/etc/open5gs/pcrf1.yaml`
 ```diff
---- pcrf.yaml.orig      2023-04-30 00:53:20.000000000 +0900
-+++ pcrf1.yaml  2023-05-03 11:22:28.000000000 +0900
-@@ -22,10 +22,10 @@
- #    domain: core,sbi,ausf,event,tlv,mem,sock
- #
+--- pcrf.yaml.orig      2024-03-24 15:36:48.000000000 +0900
++++ pcrf1.yaml  2024-03-26 21:20:14.892315834 +0900
+@@ -1,6 +1,6 @@
+ db_uri: mongodb://localhost/open5gs
  logger:
--    file: /root/open5gs/install/var/log/open5gs/pcrf.log
-+    file: /root/open5gs/install/var/log/open5gs/pcrf1.log
+-  file: /root/open5gs/install/var/log/open5gs/pcrf.log
++  file: /root/open5gs/install/var/log/open5gs/pcrf1.log
+ #  level: info   # fatal|error|warn|info(default)|debug|trace
  
+ global:
+@@ -8,7 +8,7 @@
+     ue: 1024  # The number of UE can be increased depending on memory size.
+ #    peer: 64
  pcrf:
--    freeDiameter: /root/open5gs/install/etc/freeDiameter/pcrf.conf
-+    freeDiameter: /root/open5gs/install/etc/freeDiameter/pcrf1.conf
+-  freeDiameter: /root/open5gs/install/etc/freeDiameter/pcrf.conf
++  freeDiameter: /root/open5gs/install/etc/freeDiameter/pcrf1.conf
  
- #
- #  o Disable use of IPv4 addresses (only IPv6)
+ ################################################################################
+ # Locally configured policy
 ```
 - `open5gs/install/etc/open5gs/pcrf2.yaml`
 ```diff
---- pcrf.yaml.orig      2023-04-30 00:53:20.000000000 +0900
-+++ pcrf2.yaml  2023-05-03 11:23:00.000000000 +0900
-@@ -22,10 +22,10 @@
- #    domain: core,sbi,ausf,event,tlv,mem,sock
- #
+--- pcrf.yaml.orig      2024-03-24 15:36:48.000000000 +0900
++++ pcrf2.yaml  2024-03-26 21:20:44.598488192 +0900
+@@ -1,6 +1,6 @@
+ db_uri: mongodb://localhost/open5gs
  logger:
--    file: /root/open5gs/install/var/log/open5gs/pcrf.log
-+    file: /root/open5gs/install/var/log/open5gs/pcrf2.log
+-  file: /root/open5gs/install/var/log/open5gs/pcrf.log
++  file: /root/open5gs/install/var/log/open5gs/pcrf2.log
+ #  level: info   # fatal|error|warn|info(default)|debug|trace
  
+ global:
+@@ -8,7 +8,7 @@
+     ue: 1024  # The number of UE can be increased depending on memory size.
+ #    peer: 64
  pcrf:
--    freeDiameter: /root/open5gs/install/etc/freeDiameter/pcrf.conf
-+    freeDiameter: /root/open5gs/install/etc/freeDiameter/pcrf2.conf
+-  freeDiameter: /root/open5gs/install/etc/freeDiameter/pcrf.conf
++  freeDiameter: /root/open5gs/install/etc/freeDiameter/pcrf2.conf
  
- #
- #  o Disable use of IPv4 addresses (only IPv6)
+ ################################################################################
+ # Locally configured policy
 ```
 - `open5gs/install/etc/freeDiameter/smf1.conf`  
 `smf1.conf` is equal to the original `smf.conf`.
@@ -481,42 +451,50 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 
 - `open5gs/install/etc/open5gs/sgwu.yaml`
 ```diff
---- sgwu.yaml.orig      2023-04-30 00:53:20.000000000 +0900
-+++ sgwu.yaml   2023-05-03 10:54:32.000000000 +0900
-@@ -114,9 +114,9 @@
- #
+--- sgwu.yaml.orig      2024-03-24 15:36:48.000000000 +0900
++++ sgwu.yaml   2024-03-26 21:27:23.904812158 +0900
+@@ -10,13 +10,13 @@
  sgwu:
-     pfcp:
--      - addr: 127.0.0.6
-+      - addr: 192.168.0.116
-     gtpu:
--      - addr: 127.0.0.6
-+      - addr: 192.168.0.116
+   pfcp:
+     server:
+-      - address: 127.0.0.6
++      - address: 192.168.0.116
+     client:
+ #      sgwc:    # SGW-U PFCP Client try to associate SGW-C PFCP Server
+ #        - address: 127.0.0.3
+   gtpu:
+     server:
+-      - address: 127.0.0.6
++      - address: 192.168.0.116
  
- #
- #  <PFCP Client>>
+ ################################################################################
+ # PFCP Server
 ```
 - `open5gs/install/etc/open5gs/upf.yaml`
 ```diff
---- upf.yaml.orig       2023-04-30 00:53:20.000000000 +0900
-+++ upf.yaml    2023-05-03 10:55:12.000000000 +0900
-@@ -196,12 +196,13 @@
- #
+--- upf.yaml.orig       2024-03-24 15:36:48.000000000 +0900
++++ upf.yaml    2024-03-26 21:28:47.034199450 +0900
+@@ -10,16 +10,17 @@
  upf:
-     pfcp:
--      - addr: 127.0.0.7
-+      - addr: 192.168.0.117
-     gtpu:
--      - addr: 127.0.0.7
-+      - addr: 192.168.0.117
-     subnet:
-       - addr: 10.45.0.1/16
--      - addr: 2001:db8:cafe::1/48
-+        dnn: internet
-+        dev: ogstun
-     metrics:
-       - addr: 127.0.0.7
-         port: 9090
+   pfcp:
+     server:
+-      - address: 127.0.0.7
++      - address: 192.168.0.117
+     client:
+ #      smf:     #  UPF PFCP Client try to associate SMF PFCP Server
+ #        - address: 127.0.0.4
+   gtpu:
+     server:
+-      - address: 127.0.0.7
++      - address: 192.168.0.117
+   session:
+     - subnet: 10.45.0.1/16
+-    - subnet: 2001:db8:cafe::1/48
++      dnn: internet
++      dev: ogstun
+   metrics:
+     server:
+       - address: 127.0.0.7
 ```
 
 <a id="changes_up2"></a>
@@ -525,43 +503,51 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 
 - `open5gs/install/etc/open5gs/sgwu.yaml`
 ```diff
---- sgwu.yaml.orig      2023-04-30 00:53:20.000000000 +0900
-+++ sgwu.yaml   2023-05-03 10:56:36.000000000 +0900
-@@ -114,9 +114,9 @@
- #
+--- sgwu.yaml.orig      2024-03-24 15:36:48.000000000 +0900
++++ sgwu.yaml   2024-03-26 21:30:55.482070178 +0900
+@@ -10,13 +10,13 @@
  sgwu:
-     pfcp:
--      - addr: 127.0.0.6
-+      - addr: 192.168.0.118
-     gtpu:
--      - addr: 127.0.0.6
-+      - addr: 192.168.0.118
+   pfcp:
+     server:
+-      - address: 127.0.0.6
++      - address: 192.168.0.118
+     client:
+ #      sgwc:    # SGW-U PFCP Client try to associate SGW-C PFCP Server
+ #        - address: 127.0.0.3
+   gtpu:
+     server:
+-      - address: 127.0.0.6
++      - address: 192.168.0.118
  
- #
- #  <PFCP Client>>
+ ################################################################################
+ # PFCP Server
 ```
 - `open5gs/install/etc/open5gs/upf.yaml`
 ```diff
---- upf.yaml.orig       2023-04-30 00:53:20.000000000 +0900
-+++ upf.yaml    2023-05-03 10:57:36.000000000 +0900
-@@ -196,12 +196,13 @@
- #
+--- upf.yaml.orig       2024-03-24 15:36:48.000000000 +0900
++++ upf.yaml    2024-03-26 21:32:08.918140789 +0900
+@@ -10,16 +10,17 @@
  upf:
-     pfcp:
--      - addr: 127.0.0.7
-+      - addr: 192.168.0.119
-     gtpu:
--      - addr: 127.0.0.7
-+      - addr: 192.168.0.119
-     subnet:
--      - addr: 10.45.0.1/16
--      - addr: 2001:db8:cafe::1/48
-+      - addr: 10.46.0.1/16
-+        dnn: internet
-+        dev: ogstun
-     metrics:
-       - addr: 127.0.0.7
-         port: 9090
+   pfcp:
+     server:
+-      - address: 127.0.0.7
++      - address: 192.168.0.119
+     client:
+ #      smf:     #  UPF PFCP Client try to associate SMF PFCP Server
+ #        - address: 127.0.0.4
+   gtpu:
+     server:
+-      - address: 127.0.0.7
++      - address: 192.168.0.119
+   session:
+-    - subnet: 10.45.0.1/16
+-    - subnet: 2001:db8:cafe::1/48
++    - subnet: 10.46.0.1/16
++      dnn: internet
++      dev: ogstun
+   metrics:
+     server:
+       - address: 127.0.0.7
 ```
 
 <a id="changes_srs"></a>
@@ -574,8 +560,8 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 
 - `srsRAN_4G/build/srsenb/enb.conf`
 ```diff
---- enb.conf.example    2023-05-02 10:51:20.000000000 +0900
-+++ enb.conf    2023-05-03 11:39:50.000000000 +0900
+--- enb.conf.example    2024-02-03 23:26:02.000000000 +0900
++++ enb.conf    2024-03-26 22:22:42.897283128 +0900
 @@ -22,9 +22,9 @@
  enb_id = 0x19B
  mcc = 001
@@ -603,7 +589,7 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 ```
 - `srsRAN_4G/build/srsenb/rr.conf`
 ```diff
---- rr.conf.example     2023-05-02 10:51:20.000000000 +0900
+--- rr.conf.example     2024-02-03 23:26:02.000000000 +0900
 +++ rr.conf     2023-05-02 11:52:54.000000000 +0900
 @@ -55,7 +55,7 @@
    {
@@ -622,8 +608,8 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 
 - `srsRAN_4G/build/srsenb/enb.conf`
 ```diff
---- enb.conf.example    2023-05-02 10:51:20.000000000 +0900
-+++ enb.conf    2023-05-05 16:47:30.000000000 +0900
+--- enb.conf.example    2024-02-03 23:26:02.000000000 +0900
++++ enb.conf    2024-03-26 22:22:23.396225954 +0900
 @@ -19,12 +19,12 @@
  #
  #####################################################################
@@ -655,8 +641,8 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 ```
 - `srsRAN_4G/build/srsenb/rr.conf`
 ```diff
---- rr.conf.example     2023-05-02 10:51:20.000000000 +0900
-+++ rr.conf     2023-05-03 11:33:58.000000000 +0900
+--- rr.conf.example     2024-02-03 23:26:02.000000000 +0900
++++ rr.conf     2024-03-26 22:05:16.860031943 +0900
 @@ -55,7 +55,7 @@
    {
      // rf_port = 0;
@@ -674,8 +660,8 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 
 - `srsRAN_4G/build/srsue/ue-loc1.conf`
 ```diff
---- ue.conf.example     2023-05-05 16:18:12.000000000 +0900
-+++ ue-loc1.conf        2023-05-03 11:35:38.000000000 +0900
+--- ue.conf.example     2024-02-03 23:26:02.000000000 +0900
++++ ue-loc1.conf        2024-03-26 22:07:25.360060344 +0900
 @@ -42,8 +42,8 @@
  #continuous_tx     = auto
  
@@ -719,8 +705,8 @@ Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN re
 
 - `srsRAN_4G/build/srsue/ue-loc2.conf`
 ```diff
---- ue.conf.example     2023-05-05 16:18:12.000000000 +0900
-+++ ue-loc2.conf        2023-05-05 16:33:18.000000000 +0900
+--- ue.conf.example     2024-02-03 23:26:02.000000000 +0900
++++ ue-loc2.conf        2024-03-26 22:10:41.453215867 +0900
 @@ -42,8 +42,8 @@
  #continuous_tx     = auto
  
@@ -834,8 +820,8 @@ ip addr add 192.168.0.124/24 dev enp0s8
 ## Build Open5GS and srsRAN 4G ZMQ UE / RAN
 
 Please refer to the following for building Open5GS and srsRAN 4G ZMQ UE / RAN respectively.
-- Open5GS v2.6.4 (2023.09.02) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
-- srsRAN 4G (2023.06.19) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
+- Open5GS v2.7.0 (2024.03.24) - https://open5gs.org/open5gs/docs/guide/02-building-open5gs-from-sources/
+- srsRAN 4G (2024.02.01) - https://github.com/s5uishida/build_srsran_4g_zmq_disable_rf_plugins
 
 Install MongoDB on Open5GS EPC C-Plane machine.
 It is not necessary to install MongoDB on Open5GS EPC U-Plane machines.
@@ -968,7 +954,7 @@ Run srsRAN 4G ZMQ RAN (eNodeB1) and connect to Open5GS EPC.
 
 Reading configuration file enb.conf...
 
-Built in Release mode using commit fa56836b1 on branch master.
+Built in Release mode using commit ec29b0c1f on branch master.
 
 Opening 1 channels in RF device=zmq with args=fail_on_disconnect=true,tx_port=tcp://192.168.0.121:2000,rx_port=tcp://192.168.0.123:2001,id=enb,base_srate=23.04e6
 Supported RF device list: zmq file
@@ -978,19 +964,19 @@ Current sample rate is 1.92 MHz with a base rate of 23.04 MHz (x12 decimation)
 CH0 rx_port=tcp://192.168.0.123:2001
 CH0 tx_port=tcp://192.168.0.121:2000
 CH0 fail_on_disconnect=true
-Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
-Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
-Setting frequency: DL=2680.0 Mhz, UL=2560.0 MHz for cc_idx=0 nof_prb=50
 
 ==== eNodeB started ===
 Type <t> to view trace
+Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
+Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
+Setting frequency: DL=2680.0 Mhz, UL=2560.0 MHz for cc_idx=0 nof_prb=50
 ```
 The Open5GS C-Plane log when executed is as follows.
 ```
-09/03 17:35:54.983: [mme] INFO: eNB-S1 accepted[192.168.0.121]:48973 in s1_path module (../src/mme/s1ap-sctp.c:114)
-09/03 17:35:54.983: [mme] INFO: eNB-S1 accepted[192.168.0.121] in master_sm module (../src/mme/mme-sm.c:108)
-09/03 17:35:54.983: [mme] INFO: [Added] Number of eNBs is now 1 (../src/mme/mme-context.c:2557)
-09/03 17:35:54.983: [mme] INFO: eNB-S1[192.168.0.121] max_num_of_ostreams : 30 (../src/mme/mme-sm.c:150)
+03/26 22:52:28.575: [mme] INFO: eNB-S1 accepted[192.168.0.121]:46778 in s1_path module (../src/mme/s1ap-sctp.c:114)
+03/26 22:52:28.575: [mme] INFO: eNB-S1 accepted[192.168.0.121] in master_sm module (../src/mme/mme-sm.c:108)
+03/26 22:52:28.575: [mme] INFO: [Added] Number of eNBs is now 1 (../src/mme/mme-context.c:2829)
+03/26 22:52:28.575: [mme] INFO: eNB-S1[192.168.0.121] max_num_of_ostreams : 30 (../src/mme/mme-sm.c:150)
 ```
 
 <a id="run_ue1"></a>
@@ -1003,7 +989,7 @@ Run srsRAN 4G ZMQ UE (ue-loc1.conf), connect to eNodeB1 in Loc1 and connect to O
 # ./src/srsue ue-loc1.conf
 Reading configuration file ue-loc1.conf...
 
-Built in Release mode using commit fa56836b1 on branch master.
+Built in Release mode using commit ec29b0c1f on branch master.
 
 Opening 1 channels in RF device=zmq with args=tx_port=tcp://192.168.0.123:2001,rx_port=tcp://192.168.0.121:2000,id=ue,base_srate=23.04e6
 Supported RF device list: zmq file
@@ -1021,55 +1007,55 @@ Found Cell:  Mode=FDD, PCI=1, PRB=50, Ports=1, CP=Normal, CFO=-0.2 KHz
 Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
 Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
 Found PLMN:  Id=00101, TAC=1
-Random Access Transmission: seq=32, tti=181, ra-rnti=0x2
+Random Access Transmission: seq=35, tti=181, ra-rnti=0x2
 RRC Connected
 Random Access Complete.     c-rnti=0x46, ta=0
 Network attach successful. IP: 10.45.0.2
- nTp) 3/9/2023 8:37:48 TZ:99
+ nTp) ((t) 26/3/2024 13:53:21 TZ:99
 ```
 The Open5GS C-Plane log when executed is as follows.
 ```
-09/03 17:37:47.657: [mme] INFO: InitialUEMessage (../src/mme/s1ap-handler.c:279)
-09/03 17:37:47.657: [mme] INFO: [Added] Number of eNB-UEs is now 1 (../src/mme/mme-context.c:4426)
-09/03 17:37:47.657: [mme] INFO: Unknown UE by S_TMSI[G:2,C:1,M_TMSI:0xc00001dc] (../src/mme/s1ap-handler.c:359)
-09/03 17:37:47.657: [mme] INFO:     ENB_UE_S1AP_ID[1] MME_UE_S1AP_ID[1] TAC[1] CellID[0x19b01] (../src/mme/s1ap-handler.c:455)
-09/03 17:37:47.658: [mme] INFO: Unknown UE by GUTI[G:2,C:1,M_TMSI:0xc00001dc] (../src/mme/mme-context.c:3280)
-09/03 17:37:47.658: [mme] INFO: [Added] Number of MME-UEs is now 1 (../src/mme/mme-context.c:3089)
-09/03 17:37:47.658: [emm] INFO: [] Attach request (../src/mme/emm-sm.c:412)
-09/03 17:37:47.658: [emm] INFO:     GUTI[G:2,C:1,M_TMSI:0xc00001dc] IMSI[Unknown IMSI] (../src/mme/emm-handler.c:240)
-09/03 17:37:47.710: [emm] INFO: Identity response (../src/mme/emm-sm.c:382)
-09/03 17:37:47.710: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:404)
-09/03 17:37:47.859: [mme] INFO: [Added] Number of MME-Sessions is now 1 (../src/mme/mme-context.c:4440)
-09/03 17:37:47.955: [sgwc] INFO: [Added] Number of SGWC-UEs is now 1 (../src/sgwc/context.c:237)
-09/03 17:37:47.955: [sgwc] INFO: [Added] Number of SGWC-Sessions is now 1 (../src/sgwc/context.c:879)
-09/03 17:37:47.955: [sgwc] INFO: UE IMSI[001010000000100] APN[internet] (../src/sgwc/s11-handler.c:237)
-09/03 17:37:47.956: [gtp] INFO: gtp_connect() [127.0.0.4]:2123 (../lib/gtp/path.c:60)
-09/03 17:37:47.957: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1010)
-09/03 17:37:47.957: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3050)
-09/03 17:37:47.957: [smf] INFO: UE IMSI[001010000000100] APN[internet] IPv4[10.45.0.2] IPv6[] (../src/smf/s5c-handler.c:255)
-09/03 17:37:47.961: [gtp] INFO: gtp_connect() [192.168.0.117]:2152 (../lib/gtp/path.c:60)
-09/03 17:37:48.306: [emm] INFO: [001010000000100] Attach complete (../src/mme/emm-sm.c:1298)
-09/03 17:37:48.307: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:278)
-09/03 17:37:48.307: [emm] INFO:     UTC [2023-09-03T08:37:48] Timezone[0]/DST[0] (../src/mme/emm-handler.c:285)
-09/03 17:37:48.307: [emm] INFO:     LOCAL [2023-09-03T17:37:48] Timezone[32400]/DST[0] (../src/mme/emm-handler.c:289)
+03/26 22:53:20.522: [mme] INFO: InitialUEMessage (../src/mme/s1ap-handler.c:406)
+03/26 22:53:20.522: [mme] INFO: [Added] Number of eNB-UEs is now 1 (../src/mme/mme-context.c:4735)
+03/26 22:53:20.522: [mme] INFO: Unknown UE by S_TMSI[G:2,C:1,M_TMSI:0xc0000146] (../src/mme/s1ap-handler.c:485)
+03/26 22:53:20.522: [mme] INFO:     ENB_UE_S1AP_ID[1] MME_UE_S1AP_ID[1] TAC[1] CellID[0x19b01] (../src/mme/s1ap-handler.c:585)
+03/26 22:53:20.522: [mme] INFO: Unknown UE by GUTI[G:2,C:1,M_TMSI:0xc0000146] (../src/mme/mme-context.c:3586)
+03/26 22:53:20.523: [mme] INFO: [Added] Number of MME-UEs is now 1 (../src/mme/mme-context.c:3379)
+03/26 22:53:20.523: [emm] INFO: [] Attach request (../src/mme/emm-sm.c:423)
+03/26 22:53:20.523: [emm] INFO:     GUTI[G:2,C:1,M_TMSI:0xc0000146] IMSI[Unknown IMSI] (../src/mme/emm-handler.c:236)
+03/26 22:53:20.587: [emm] INFO: Identity response (../src/mme/emm-sm.c:393)
+03/26 22:53:20.587: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:428)
+03/26 22:53:20.689: [mme] INFO: [Added] Number of MME-Sessions is now 1 (../src/mme/mme-context.c:4749)
+03/26 22:53:20.753: [sgwc] INFO: [Added] Number of SGWC-UEs is now 1 (../src/sgwc/context.c:239)
+03/26 22:53:20.753: [sgwc] INFO: [Added] Number of SGWC-Sessions is now 1 (../src/sgwc/context.c:882)
+03/26 22:53:20.753: [sgwc] INFO: UE IMSI[001010000000100] APN[internet] (../src/sgwc/s11-handler.c:239)
+03/26 22:53:20.754: [gtp] INFO: gtp_connect() [127.0.0.4]:2123 (../lib/gtp/path.c:60)
+03/26 22:53:20.754: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1019)
+03/26 22:53:20.754: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3090)
+03/26 22:53:20.754: [smf] INFO: UE IMSI[001010000000100] APN[internet] IPv4[10.45.0.2] IPv6[] (../src/smf/s5c-handler.c:275)
+03/26 22:53:20.758: [gtp] INFO: gtp_connect() [192.168.0.117]:2152 (../lib/gtp/path.c:60)
+03/26 22:53:21.058: [emm] INFO: [001010000000100] Attach complete (../src/mme/emm-sm.c:1384)
+03/26 22:53:21.059: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:275)
+03/26 22:53:21.059: [emm] INFO:     UTC [2024-03-26T13:53:21] Timezone[0]/DST[0] (../src/mme/emm-handler.c:281)
+03/26 22:53:21.059: [emm] INFO:     LOCAL [2024-03-26T22:53:21] Timezone[32400]/DST[0] (../src/mme/emm-handler.c:285)
 ```
 The Open5GS U-Plane1 log when executed is as follows.
 ```
-09/03 17:37:47.952: [sgwu] INFO: UE F-SEID[UP:0x89d CP:0x73e] (../src/sgwu/context.c:169)
-09/03 17:37:47.952: [sgwu] INFO: [Added] Number of SGWU-Sessions is now 1 (../src/sgwu/context.c:174)
-09/03 17:37:47.956: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:206)
-09/03 17:37:47.956: [gtp] INFO: gtp_connect() [192.168.0.116]:2152 (../lib/gtp/path.c:60)
-09/03 17:37:47.956: [gtp] INFO: gtp_connect() [192.168.0.113]:2152 (../lib/gtp/path.c:60)
-09/03 17:37:47.956: [upf] INFO: UE F-SEID[UP:0xded CP:0x791] APN[internet] PDN-Type[1] IPv4[10.45.0.2] IPv6[] (../src/upf/context.c:483)
-09/03 17:37:47.956: [upf] INFO: UE F-SEID[UP:0xded CP:0x791] APN[internet] PDN-Type[1] IPv4[10.45.0.2] IPv6[] (../src/upf/context.c:483)
-09/03 17:37:47.957: [gtp] INFO: gtp_connect() [192.168.0.117]:2152 (../lib/gtp/path.c:60)
-09/03 17:37:48.304: [gtp] INFO: gtp_connect() [192.168.0.121]:2152 (../lib/gtp/path.c:60)
+03/26 22:53:20.769: [sgwu] INFO: UE F-SEID[UP:0x180 CP:0x3e4] (../src/sgwu/context.c:171)
+03/26 22:53:20.769: [sgwu] INFO: [Added] Number of SGWU-Sessions is now 1 (../src/sgwu/context.c:176)
+03/26 22:53:20.773: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:208)
+03/26 22:53:20.773: [gtp] INFO: gtp_connect() [192.168.0.116]:2152 (../lib/gtp/path.c:60)
+03/26 22:53:20.773: [gtp] INFO: gtp_connect() [192.168.0.113]:2152 (../lib/gtp/path.c:60)
+03/26 22:53:20.773: [upf] INFO: UE F-SEID[UP:0x6cd CP:0x8da] APN[internet] PDN-Type[1] IPv4[10.45.0.2] IPv6[] (../src/upf/context.c:485)
+03/26 22:53:20.773: [upf] INFO: UE F-SEID[UP:0x6cd CP:0x8da] APN[internet] PDN-Type[1] IPv4[10.45.0.2] IPv6[] (../src/upf/context.c:485)
+03/26 22:53:20.774: [gtp] INFO: gtp_connect() [192.168.0.117]:2152 (../lib/gtp/path.c:60)
+03/26 22:53:21.076: [gtp] INFO: gtp_connect() [192.168.0.121]:2152 (../lib/gtp/path.c:60)
 ```
 The result of `ip addr show` on VM6 (UE) is as follows.
 ```
 # ip addr show
 ...
-6: tun_srsue: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UNKNOWN group default qlen 500
+8: tun_srsue: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UNKNOWN group default qlen 500
     link/none 
     inet 10.45.0.2/24 scope global tun_srsue
        valid_lft forever preferred_lft forever
@@ -1083,19 +1069,19 @@ The result of `ip addr show` on VM6 (UE) is as follows.
 Confirm by using `tcpdump` that the packet goes through `if=ogstun` on U-Plane1.
 ```
 # ping google.com -I tun_srsue -n
-PING google.com (172.217.161.78) from 10.45.0.2 tun_srsue: 56(84) bytes of data.
-64 bytes from 172.217.161.78: icmp_seq=1 ttl=61 time=438 ms
-64 bytes from 172.217.161.78: icmp_seq=2 ttl=61 time=66.6 ms
-64 bytes from 172.217.161.78: icmp_seq=3 ttl=61 time=69.9 ms
+PING google.com (142.250.207.14) from 10.45.0.2 tun_srsue: 56(84) bytes of data.
+64 bytes from 142.250.207.14: icmp_seq=1 ttl=61 time=371 ms
+64 bytes from 142.250.207.14: icmp_seq=2 ttl=61 time=86.4 ms
+64 bytes from 142.250.207.14: icmp_seq=3 ttl=61 time=97.0 ms
 ```
 The `tcpdump` log on U-Plane1 is as follows.
 ```
-17:39:33.917147 IP 10.45.0.2 > 172.217.161.78: ICMP echo request, id 3, seq 1, length 64
-17:39:33.942728 IP 172.217.161.78 > 10.45.0.2: ICMP echo reply, id 3, seq 1, length 64
-17:39:34.591150 IP 10.45.0.2 > 172.217.161.78: ICMP echo request, id 3, seq 2, length 64
-17:39:34.606917 IP 172.217.161.78 > 10.45.0.2: ICMP echo reply, id 3, seq 2, length 64
-17:39:35.593994 IP 10.45.0.2 > 172.217.161.78: ICMP echo request, id 3, seq 3, length 64
-17:39:35.610527 IP 172.217.161.78 > 10.45.0.2: ICMP echo reply, id 3, seq 3, length 64
+22:55:00.370286 IP 10.45.0.2 > 142.250.207.14: ICMP echo request, id 5, seq 1, length 64
+22:55:00.419638 IP 142.250.207.14 > 10.45.0.2: ICMP echo reply, id 5, seq 1, length 64
+22:55:01.181410 IP 10.45.0.2 > 142.250.207.14: ICMP echo request, id 5, seq 2, length 64
+22:55:01.217645 IP 142.250.207.14 > 10.45.0.2: ICMP echo reply, id 5, seq 2, length 64
+22:55:02.193876 IP 10.45.0.2 > 142.250.207.14: ICMP echo request, id 5, seq 3, length 64
+22:55:02.228175 IP 142.250.207.14 > 10.45.0.2: ICMP echo reply, id 5, seq 3, length 64
 ```
 **Note. Make sure the packet does not go through U-Plane2. The UE connects to the PDN of U-Plane1 in the same Loc1 according to the connected eNodeB1 in Loc1.**
 
@@ -1127,7 +1113,7 @@ Run srsRAN 4G ZMQ RAN (eNodeB2) and connect to Open5GS EPC.
 
 Reading configuration file enb.conf...
 
-Built in Release mode using commit fa56836b1 on branch master.
+Built in Release mode using commit ec29b0c1f on branch master.
 
 Opening 1 channels in RF device=zmq with args=fail_on_disconnect=true,tx_port=tcp://192.168.0.122:2000,rx_port=tcp://192.168.0.124:2001,id=enb,base_srate=23.04e6
 Supported RF device list: zmq file
@@ -1137,19 +1123,19 @@ Current sample rate is 1.92 MHz with a base rate of 23.04 MHz (x12 decimation)
 CH0 rx_port=tcp://192.168.0.124:2001
 CH0 tx_port=tcp://192.168.0.122:2000
 CH0 fail_on_disconnect=true
-Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
-Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
-Setting frequency: DL=2680.0 Mhz, UL=2560.0 MHz for cc_idx=0 nof_prb=50
 
 ==== eNodeB started ===
 Type <t> to view trace
+Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
+Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
+Setting frequency: DL=2680.0 Mhz, UL=2560.0 MHz for cc_idx=0 nof_prb=50
 ```
 The Open5GS C-Plane log when executed is as follows.
 ```
-09/03 17:50:00.581: [mme] INFO: eNB-S1 accepted[192.168.0.122]:40020 in s1_path module (../src/mme/s1ap-sctp.c:114)
-09/03 17:50:00.581: [mme] INFO: eNB-S1 accepted[192.168.0.122] in master_sm module (../src/mme/mme-sm.c:108)
-09/03 17:50:00.581: [mme] INFO: [Added] Number of eNBs is now 1 (../src/mme/mme-context.c:2557)
-09/03 17:50:00.581: [mme] INFO: eNB-S1[192.168.0.122] max_num_of_ostreams : 30 (../src/mme/mme-sm.c:150)
+03/26 22:59:43.919: [mme] INFO: eNB-S1 accepted[192.168.0.122]:35945 in s1_path module (../src/mme/s1ap-sctp.c:114)
+03/26 22:59:43.919: [mme] INFO: eNB-S1 accepted[192.168.0.122] in master_sm module (../src/mme/mme-sm.c:108)
+03/26 22:59:43.919: [mme] INFO: [Added] Number of eNBs is now 1 (../src/mme/mme-context.c:2829)
+03/26 22:59:43.919: [mme] INFO: eNB-S1[192.168.0.122] max_num_of_ostreams : 30 (../src/mme/mme-sm.c:150)
 ```
 
 <a id="run_ue2"></a>
@@ -1162,7 +1148,7 @@ Run srsRAN 4G ZMQ UE (ue-loc2.conf), connect to eNodeB2 in Loc2 and connect to O
 # ./src/srsue ue-loc2.conf
 Reading configuration file ue-loc2.conf...
 
-Built in Release mode using commit fa56836b1 on branch master.
+Built in Release mode using commit ec29b0c1f on branch master.
 
 Opening 1 channels in RF device=zmq with args=tx_port=tcp://192.168.0.124:2001,rx_port=tcp://192.168.0.122:2000,id=ue,base_srate=23.04e6
 Supported RF device list: zmq file
@@ -1180,55 +1166,55 @@ Found Cell:  Mode=FDD, PCI=1, PRB=50, Ports=1, CP=Normal, CFO=-0.2 KHz
 Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
 Current sample rate is 11.52 MHz with a base rate of 23.04 MHz (x2 decimation)
 Found PLMN:  Id=00101, TAC=2
-Random Access Transmission: seq=33, tti=181, ra-rnti=0x2
+Random Access Transmission: seq=14, tti=181, ra-rnti=0x2
 RRC Connected
 Random Access Complete.     c-rnti=0x46, ta=0
 Network attach successful. IP: 10.46.0.2
- nTp) 3/9/2023 8:51:14 TZ:99
+ nTp) ((t) 26/3/2024 14:1:15 TZ:99
 ```
 The Open5GS C-Plane log when executed is as follows.
 ```
-09/03 17:51:13.952: [mme] INFO: InitialUEMessage (../src/mme/s1ap-handler.c:279)
-09/03 17:51:13.952: [mme] INFO: [Added] Number of eNB-UEs is now 1 (../src/mme/mme-context.c:4426)
-09/03 17:51:13.952: [mme] INFO: Unknown UE by S_TMSI[G:2,C:1,M_TMSI:0xc00005b2] (../src/mme/s1ap-handler.c:359)
-09/03 17:51:13.952: [mme] INFO:     ENB_UE_S1AP_ID[1] MME_UE_S1AP_ID[1] TAC[2] CellID[0x19c01] (../src/mme/s1ap-handler.c:455)
-09/03 17:51:13.952: [mme] INFO: Unknown UE by GUTI[G:2,C:1,M_TMSI:0xc00005b2] (../src/mme/mme-context.c:3280)
-09/03 17:51:13.952: [mme] INFO: [Added] Number of MME-UEs is now 1 (../src/mme/mme-context.c:3089)
-09/03 17:51:13.952: [emm] INFO: [] Attach request (../src/mme/emm-sm.c:412)
-09/03 17:51:13.952: [emm] INFO:     GUTI[G:2,C:1,M_TMSI:0xc00005b2] IMSI[Unknown IMSI] (../src/mme/emm-handler.c:240)
-09/03 17:51:14.004: [emm] INFO: Identity response (../src/mme/emm-sm.c:382)
-09/03 17:51:14.004: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:404)
-09/03 17:51:14.106: [mme] INFO: [Added] Number of MME-Sessions is now 1 (../src/mme/mme-context.c:4440)
-09/03 17:51:14.200: [sgwc] INFO: [Added] Number of SGWC-UEs is now 1 (../src/sgwc/context.c:237)
-09/03 17:51:14.200: [sgwc] INFO: [Added] Number of SGWC-Sessions is now 1 (../src/sgwc/context.c:879)
-09/03 17:51:14.200: [sgwc] INFO: UE IMSI[001010000000100] APN[internet] (../src/sgwc/s11-handler.c:237)
-09/03 17:51:14.201: [gtp] INFO: gtp_connect() [127.0.0.24]:2123 (../lib/gtp/path.c:60)
-09/03 17:51:14.201: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1010)
-09/03 17:51:14.201: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3050)
-09/03 17:51:14.201: [smf] INFO: UE IMSI[001010000000100] APN[internet] IPv4[10.46.0.2] IPv6[] (../src/smf/s5c-handler.c:255)
-09/03 17:51:14.205: [gtp] INFO: gtp_connect() [192.168.0.119]:2152 (../lib/gtp/path.c:60)
-09/03 17:51:14.546: [emm] INFO: [001010000000100] Attach complete (../src/mme/emm-sm.c:1298)
-09/03 17:51:14.547: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:278)
-09/03 17:51:14.547: [emm] INFO:     UTC [2023-09-03T08:51:14] Timezone[0]/DST[0] (../src/mme/emm-handler.c:285)
-09/03 17:51:14.547: [emm] INFO:     LOCAL [2023-09-03T17:51:14] Timezone[32400]/DST[0] (../src/mme/emm-handler.c:289)
+03/26 23:01:14.682: [mme] INFO: InitialUEMessage (../src/mme/s1ap-handler.c:406)
+03/26 23:01:14.682: [mme] INFO: [Added] Number of eNB-UEs is now 1 (../src/mme/mme-context.c:4735)
+03/26 23:01:14.682: [mme] INFO: Unknown UE by S_TMSI[G:2,C:1,M_TMSI:0xc0000614] (../src/mme/s1ap-handler.c:485)
+03/26 23:01:14.682: [mme] INFO:     ENB_UE_S1AP_ID[1] MME_UE_S1AP_ID[1] TAC[2] CellID[0x19c01] (../src/mme/s1ap-handler.c:585)
+03/26 23:01:14.682: [mme] INFO: Unknown UE by GUTI[G:2,C:1,M_TMSI:0xc0000614] (../src/mme/mme-context.c:3586)
+03/26 23:01:14.682: [mme] INFO: [Added] Number of MME-UEs is now 1 (../src/mme/mme-context.c:3379)
+03/26 23:01:14.682: [emm] INFO: [] Attach request (../src/mme/emm-sm.c:423)
+03/26 23:01:14.682: [emm] INFO:     GUTI[G:2,C:1,M_TMSI:0xc0000614] IMSI[Unknown IMSI] (../src/mme/emm-handler.c:236)
+03/26 23:01:14.720: [emm] INFO: Identity response (../src/mme/emm-sm.c:393)
+03/26 23:01:14.721: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:428)
+03/26 23:01:14.839: [mme] INFO: [Added] Number of MME-Sessions is now 1 (../src/mme/mme-context.c:4749)
+03/26 23:01:14.910: [sgwc] INFO: [Added] Number of SGWC-UEs is now 1 (../src/sgwc/context.c:239)
+03/26 23:01:14.910: [sgwc] INFO: [Added] Number of SGWC-Sessions is now 1 (../src/sgwc/context.c:882)
+03/26 23:01:14.910: [sgwc] INFO: UE IMSI[001010000000100] APN[internet] (../src/sgwc/s11-handler.c:239)
+03/26 23:01:14.911: [gtp] INFO: gtp_connect() [127.0.0.24]:2123 (../lib/gtp/path.c:60)
+03/26 23:01:14.911: [smf] INFO: [Added] Number of SMF-UEs is now 1 (../src/smf/context.c:1019)
+03/26 23:01:14.911: [smf] INFO: [Added] Number of SMF-Sessions is now 1 (../src/smf/context.c:3090)
+03/26 23:01:14.912: [smf] INFO: UE IMSI[001010000000100] APN[internet] IPv4[10.46.0.2] IPv6[] (../src/smf/s5c-handler.c:275)
+03/26 23:01:14.915: [gtp] INFO: gtp_connect() [192.168.0.119]:2152 (../lib/gtp/path.c:60)
+03/26 23:01:15.226: [emm] INFO: [001010000000100] Attach complete (../src/mme/emm-sm.c:1384)
+03/26 23:01:15.227: [emm] INFO:     IMSI[001010000000100] (../src/mme/emm-handler.c:275)
+03/26 23:01:15.227: [emm] INFO:     UTC [2024-03-26T14:01:15] Timezone[0]/DST[0] (../src/mme/emm-handler.c:281)
+03/26 23:01:15.227: [emm] INFO:     LOCAL [2024-03-26T23:01:15] Timezone[32400]/DST[0] (../src/mme/emm-handler.c:285)
 ```
 The Open5GS U-Plane2 log when executed is as follows.
 ```
-09/03 17:51:14.199: [sgwu] INFO: UE F-SEID[UP:0x804 CP:0x801] (../src/sgwu/context.c:169)
-09/03 17:51:14.199: [sgwu] INFO: [Added] Number of SGWU-Sessions is now 1 (../src/sgwu/context.c:174)
-09/03 17:51:14.203: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:206)
-09/03 17:51:14.203: [gtp] INFO: gtp_connect() [192.168.0.118]:2152 (../lib/gtp/path.c:60)
-09/03 17:51:14.203: [gtp] INFO: gtp_connect() [192.168.0.115]:2152 (../lib/gtp/path.c:60)
-09/03 17:51:14.203: [upf] INFO: UE F-SEID[UP:0x3b4 CP:0xff0] APN[internet] PDN-Type[1] IPv4[10.46.0.2] IPv6[] (../src/upf/context.c:483)
-09/03 17:51:14.203: [upf] INFO: UE F-SEID[UP:0x3b4 CP:0xff0] APN[internet] PDN-Type[1] IPv4[10.46.0.2] IPv6[] (../src/upf/context.c:483)
-09/03 17:51:14.204: [gtp] INFO: gtp_connect() [192.168.0.119]:2152 (../lib/gtp/path.c:60)
-09/03 17:51:14.547: [gtp] INFO: gtp_connect() [192.168.0.122]:2152 (../lib/gtp/path.c:60)
+03/26 23:01:14.958: [sgwu] INFO: UE F-SEID[UP:0xae0 CP:0x712] (../src/sgwu/context.c:171)
+03/26 23:01:14.958: [sgwu] INFO: [Added] Number of SGWU-Sessions is now 1 (../src/sgwu/context.c:176)
+03/26 23:01:14.961: [upf] INFO: [Added] Number of UPF-Sessions is now 1 (../src/upf/context.c:208)
+03/26 23:01:14.961: [gtp] INFO: gtp_connect() [192.168.0.118]:2152 (../lib/gtp/path.c:60)
+03/26 23:01:14.961: [gtp] INFO: gtp_connect() [192.168.0.115]:2152 (../lib/gtp/path.c:60)
+03/26 23:01:14.961: [upf] INFO: UE F-SEID[UP:0x714 CP:0xa94] APN[internet] PDN-Type[1] IPv4[10.46.0.2] IPv6[] (../src/upf/context.c:485)
+03/26 23:01:14.961: [upf] INFO: UE F-SEID[UP:0x714 CP:0xa94] APN[internet] PDN-Type[1] IPv4[10.46.0.2] IPv6[] (../src/upf/context.c:485)
+03/26 23:01:14.962: [gtp] INFO: gtp_connect() [192.168.0.119]:2152 (../lib/gtp/path.c:60)
+03/26 23:01:15.274: [gtp] INFO: gtp_connect() [192.168.0.122]:2152 (../lib/gtp/path.c:60)
 ```
 The result of `ip addr show` on VM6 (UE) is as follows.
 ```
 # ip addr show
 ...
-8: tun_srsue: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UNKNOWN group default qlen 500
+10: tun_srsue: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UNKNOWN group default qlen 500
     link/none 
     inet 10.46.0.2/24 scope global tun_srsue
        valid_lft forever preferred_lft forever
@@ -1242,19 +1228,19 @@ The result of `ip addr show` on VM6 (UE) is as follows.
 Confirm by using `tcpdump` that the packet goes through `if=ogstun` on U-Plane2.
 ```
 # ping google.com -I tun_srsue -n
-PING google.com (172.217.161.78) from 10.46.0.2 tun_srsue: 56(84) bytes of data.
-64 bytes from 172.217.161.78: icmp_seq=1 ttl=61 time=78.7 ms
-64 bytes from 172.217.161.78: icmp_seq=2 ttl=61 time=71.7 ms
-64 bytes from 172.217.161.78: icmp_seq=3 ttl=61 time=105 ms
+PING google.com (142.250.207.14) from 10.46.0.2 tun_srsue: 56(84) bytes of data.
+64 bytes from 142.250.207.14: icmp_seq=1 ttl=61 time=401 ms
+64 bytes from 142.250.207.14: icmp_seq=2 ttl=61 time=117 ms
+64 bytes from 142.250.207.14: icmp_seq=3 ttl=61 time=74.4 ms
 ```
 The `tcpdump` log on U-Plane2 is as follows.
 ```
-17:53:03.985589 IP 10.46.0.2 > 172.217.161.78: ICMP echo request, id 6, seq 1, length 64
-17:53:04.007017 IP 172.217.161.78 > 10.46.0.2: ICMP echo reply, id 6, seq 1, length 64
-17:53:04.985819 IP 10.46.0.2 > 172.217.161.78: ICMP echo request, id 6, seq 2, length 64
-17:53:05.001360 IP 172.217.161.78 > 10.46.0.2: ICMP echo reply, id 6, seq 2, length 64
-17:53:06.018756 IP 10.46.0.2 > 172.217.161.78: ICMP echo request, id 6, seq 3, length 64
-17:53:06.034966 IP 172.217.161.78 > 10.46.0.2: ICMP echo reply, id 6, seq 3, length 64
+23:02:55.655558 IP 10.46.0.2 > 142.250.207.14: ICMP echo request, id 7, seq 1, length 64
+23:02:55.696997 IP 142.250.207.14 > 10.46.0.2: ICMP echo reply, id 7, seq 1, length 64
+23:02:56.486725 IP 10.46.0.2 > 142.250.207.14: ICMP echo request, id 7, seq 2, length 64
+23:02:56.538326 IP 142.250.207.14 > 10.46.0.2: ICMP echo reply, id 7, seq 2, length 64
+23:02:57.482311 IP 10.46.0.2 > 142.250.207.14: ICMP echo request, id 7, seq 3, length 64
+23:02:57.497455 IP 142.250.207.14 > 10.46.0.2: ICMP echo reply, id 7, seq 3, length 64
 ```
 **Note. Make sure the packet does not go through U-Plane1. The UE connects to the PDN of U-Plane2 in the same Loc2 according to the connected eNodeB2 in Loc2.**
 
@@ -1266,5 +1252,6 @@ I would like to thank the excellent developers and all the contributors of Open5
 
 ## Changelog (summary)
 
+- [2024.03.26] Updated to Open5GS v2.7.0 (2024.03.24).
 - [2023.09.03] Updated Open5GS and srsRAN 4G.
 - [2023.05.07] Initial release.
