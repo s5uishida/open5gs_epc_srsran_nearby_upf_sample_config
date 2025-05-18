@@ -898,14 +898,15 @@ First, run Open5GS EPC C-Plane.
 
 - Open5GS EPC C-Plane
 ```
+./install/bin/open5gs-hssd &
+./install/bin/open5gs-pcrfd -c install/etc/open5gs/pcrf1.yaml &
+./install/bin/open5gs-pcrfd -c install/etc/open5gs/pcrf2.yaml &
+sleep 1
 ./install/bin/open5gs-mmed &
 ./install/bin/open5gs-sgwcd -c install/etc/open5gs/sgwc1.yaml &
 ./install/bin/open5gs-sgwcd -c install/etc/open5gs/sgwc2.yaml &
 ./install/bin/open5gs-smfd -c install/etc/open5gs/smf1.yaml &
 ./install/bin/open5gs-smfd -c install/etc/open5gs/smf2.yaml &
-./install/bin/open5gs-hssd &
-./install/bin/open5gs-pcrfd -c install/etc/open5gs/pcrf1.yaml &
-./install/bin/open5gs-pcrfd -c install/etc/open5gs/pcrf2.yaml &
 ```
 
 <a id="run_up"></a>
