@@ -772,12 +772,12 @@ Please refer to the following for building Open5GS and srsRAN_4G ZMQ UE / RAN re
 
 Add IP addresses for SGW-C1/SMF1(PGW-C) and SGW-C2/SMF2(PGW-C).
 ```
-ip addr add 192.168.0.112/24 dev enp0s8
-ip addr add 192.168.0.113/24 dev enp0s8
-ip addr add 192.168.0.114/24 dev enp0s8
-ip addr add 192.168.0.115/24 dev enp0s8
+ip addr add 192.168.0.112/24 dev ens19
+ip addr add 192.168.0.113/24 dev ens19
+ip addr add 192.168.0.114/24 dev ens19
+ip addr add 192.168.0.115/24 dev ens19
 ```
-**Note. `enp0s8` is the network interface of `192.168.0.0/24` in my VirtualBox environment.
+**Note. `ens19` is the network interface of `192.168.0.0/24` in my Proxmox VE environment.
 Please change it according to your environment.**
 
 <a id="network_settings_up1"></a>
@@ -793,7 +793,7 @@ net.ipv4.ip_forward=1
 ```
 Next, add IP address for UPF(PGW-U) and configure the TUNnel interface and NAPT.
 ```
-ip addr add 192.168.0.117/24 dev enp0s8
+ip addr add 192.168.0.117/24 dev ens19
 
 ip tuntap add name ogstun mode tun
 ip addr add 10.45.0.1/16 dev ogstun
@@ -815,7 +815,7 @@ net.ipv4.ip_forward=1
 ```
 Next, add IP address for UPF(PGW-U) and configure the TUNnel interface and NAPT.
 ```
-ip addr add 192.168.0.119/24 dev enp0s8
+ip addr add 192.168.0.119/24 dev ens19
 
 ip tuntap add name ogstun mode tun
 ip addr add 10.46.0.1/16 dev ogstun
