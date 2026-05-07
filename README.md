@@ -73,12 +73,12 @@ MME, SGW-C, SMF(PGW-C) and PCRF addresses are as follows.
 | NF | IP address | Local address | Supported TACs |
 | --- | --- | --- | --- |
 | MME | 192.168.0.111 | 127.0.0.2 | 1, 2 |
+| PCRF1 | -- | 127.0.0.9 | -- |
 | SGW-C1 | 192.168.0.112 | 127.0.0.3 | 1 |
 | SMF1(PGW-C) | 192.168.0.113 | 127.0.0.4 | 1 |
-| PCRF1 | -- | 127.0.0.9 | -- |
+| PCRF2 | -- | 127.0.0.29 | -- |
 | SGW-C2 | 192.168.0.114 | 127.0.0.23 | 2 |
 | SMF2(PGW-C) | 192.168.0.115 | 127.0.0.24 | 2 |
-| PCRF2 | -- | 127.0.0.29 | -- |
 
 The main information of eNodeBs is as follows.
 | eNodeB# | Location# |IP address | MCC | MNC | TAC | eNodeB ID | Cell ID | E-UTRAN Cell ID |
