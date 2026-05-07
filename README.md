@@ -87,9 +87,9 @@ The main information of eNodeBs is as follows.
 | eNodeB2 | Loc2 | 192.168.0.122 | 001 | 01 | 2 | 0x19c | 0x01 | 0x19c01 |
 
 Subscriber Information (other information is the same) is as follows.  
-| UE | IMSI | PDN | OP/OPc | eNodeB# | IP address in ue.conf of srsRAN UE |
-| --- | --- | --- | --- | --- | --- |
-| UE | 001010000000100 | internet | OPc | eNodeB1 in Loc1 <br> eNodeB2 in Loc2 | 192.168.0.123 |
+| UE | IMSI | PDN | OP/OPc | eNodeB# |
+| --- | --- | --- | --- | --- |
+| UE | 001010000000100 | internet | OPc | eNodeB1 in Loc1 <br> eNodeB2 in Loc2 |
 
 I registered these information with the Open5GS WebUI.
 In addition, [3GPP TS 35.208](https://www.3gpp.org/DynaReport/35208.htm) "4.3 Test Sets" is published by 3GPP as test data for the 3GPP authentication and key generation functions (MILENAGE).
